@@ -35,6 +35,7 @@ const HOME_URL = 'https://www.youtube.com'
 let win = null
 let view = null
 let chromeVisible = false
+let htmlFullscreen = false
 let clickThrough = false
 let state = null
 
@@ -48,6 +49,10 @@ function create({ userAgent, partition }) {
     frame: false,
     resizable: true,
     hasShadow: true,
+    // Native macOS fullscreen would give the window its own Space, which is the
+    // exact opposite of a floating PiP. Video fullscreen is handled below by
+    // expanding the view inside the window we already have.
+    fullscreenable: false,
     backgroundColor: '#000000',
     show: false,
     // No min/max size on purpose: electron#50367 makes the aspect-ratio clamp
@@ -68,6 +73,11 @@ function create({ userAgent, partition }) {
       partition, // persistent, so the YouTube login survives restarts
       contextIsolation: true,
       nodeIntegration: false,
+      // The core of it: without this, the HTML5 Fullscreen API propagates up and
+      // Chromium promotes the OWNING window to native fullscreen. With it, the
+      // page fullscreens inside the window's current bounds and we keep our size
+      // and position.
+      disableHtmlFullscreenWindowResize: true,
     },
   })
   // WebContentsView instantiates with a WHITE background (unlike the old
@@ -90,11 +100,11 @@ function create({ userAgent, partition }) {
   return win
 }
 
-/** The view fills everything below the chrome bar. */
+/** The view fills everything below the chrome bar — or all of it in fullscreen. */
 function layoutView() {
   if (!win || !view) return
   const [w, h] = win.getContentSize()
-  const top = chromeVisible ? CHROME_H : CHROME_COLLAPSED
+  const top = htmlFullscreen ? 0 : chromeVisible ? CHROME_H : CHROME_COLLAPSED
   view.setBounds({ x: 0, y: top, width: w, height: Math.max(0, h - top) })
 }
 
@@ -133,6 +143,26 @@ function wireEvents() {
   view.webContents.on('did-navigate', pushNavState)
   view.webContents.on('did-navigate-in-page', pushNavState)
 
+  // Video fullscreen means "fill THIS window", never "take over the screen".
+  view.webContents.on('enter-html-full-screen', () => {
+    htmlFullscreen = true
+    chromeVisible = false
+    // The declared ratio carves out the chrome sliver; in fullscreen there is no
+    // sliver, so the video is the whole window and the extra height must go.
+    win.setAspectRatio(ASPECT, { width: 0, height: 0 })
+    // Belt and braces: undo any promotion that slipped through.
+    if (win.isFullScreen()) win.setFullScreen(false)
+    layoutView()
+    win.webContents.send('html-fullscreen', true)
+  })
+
+  view.webContents.on('leave-html-full-screen', () => {
+    htmlFullscreen = false
+    win.setAspectRatio(ASPECT, { width: 0, height: CHROME_COLLAPSED })
+    layoutView()
+    win.webContents.send('html-fullscreen', false)
+  })
+
   // Click-through silently stops working after a page reload (electron#15376),
   // so it has to be re-applied every time the view finishes loading.
   view.webContents.on('did-finish-load', () => {
@@ -168,7 +198,17 @@ function wireEvents() {
   // ⌘Q also has to work while the video has focus — the two webContents receive
   // key events independently, and the view is what's focused most of the time.
   view.webContents.on('before-input-event', (_event, input) => {
-    if (!input.meta || input.type !== 'keyDown') return
+    if (input.type !== 'keyDown') return
+
+    // Before the `meta` guard: Escape carries no modifier. YouTube handles it
+    // itself, but the window is frameless — on a page that doesn't, this is the
+    // only way out of fullscreen.
+    if (input.key === 'Escape' && htmlFullscreen) {
+      view.webContents.executeJavaScript('document.exitFullscreen()').catch(() => {})
+      return
+    }
+
+    if (!input.meta) return
     const key = input.key.toLowerCase()
     if (key === 'q' || key === 'w') app.quit()
   })
@@ -187,6 +227,9 @@ function persist() {
 /* ---------- actions exposed over IPC / global shortcuts ---------- */
 
 function setChromeVisible(visible) {
+  // A late hover event from the renderer must not reopen the bar underneath a
+  // fullscreen video.
+  if (htmlFullscreen) return
   if (chromeVisible === visible) return
   chromeVisible = visible
   layoutView()

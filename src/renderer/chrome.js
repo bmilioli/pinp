@@ -6,9 +6,11 @@ const backBtn = document.getElementById('back')
 const forwardBtn = document.getElementById('forward')
 
 let pinned = false // held open while the URL field is in use
+let fullscreen = false // the view covers us entirely — there is nothing to open
 let closeTimer = null
 
 function setOpen(open) {
+  if (fullscreen) return
   if (!open && pinned) return
   hotzone.classList.toggle('open', open)
   // The main process moves the WebContentsView to match — the bar isn't drawn
@@ -69,6 +71,17 @@ window.pinp.onNavState(({ url, canGoBack, canGoForward }) => {
   if (document.activeElement !== urlInput) urlInput.value = url
   backBtn.disabled = !canGoBack
   forwardBtn.disabled = !canGoForward
+})
+
+window.pinp.onFullscreen((on) => {
+  fullscreen = on
+  // Drop the open state directly: while the video covers the bar no mouseleave
+  // ever arrives, so without this it would still be `.open` on the way out.
+  if (on) {
+    clearTimeout(closeTimer)
+    pinned = false
+    hotzone.classList.remove('open')
+  }
 })
 
 window.pinp.onClickThrough((on) => {

@@ -16,4 +16,5 @@ contextBridge.exposeInMainWorld('pinp', {
 
   onNavState: (cb) => ipcRenderer.on('nav-state', (_e, s) => cb(s)),
   onClickThrough: (cb) => ipcRenderer.on('click-through', (_e, on) => cb(on)),
+  onFullscreen: (cb) => ipcRenderer.on('html-fullscreen', (_e, on) => cb(on)),
 })
