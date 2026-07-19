@@ -99,8 +99,7 @@ edge. It should feel like part of the desktop, not like another app you manage.
 
 ## Requirements
 
-- **macOS** (Apple Silicon build target is `arm64`; see
-  [Known limitations](#known-limitations) for Intel).
+- **macOS** on Apple Silicon or Intel — the released build is universal.
 - **Node.js 18+** and npm.
 - **Xcode Command Line Tools** — only needed to build a `.app`
   (`xcode-select --install`). Running from source doesn't require them.
@@ -108,6 +107,24 @@ edge. It should feel like part of the desktop, not like another app you manage.
 ---
 
 ## Install & run
+
+### Download the app (recommended)
+
+Grab the latest `.dmg` from the
+[Releases page](https://github.com/bmilioli/pinp/releases/latest), open it, and
+drag **pinp** into Applications. The build is universal — it runs on both Apple
+Silicon and Intel.
+
+The app is signed ad-hoc, not notarized by Apple, so the first launch will fail
+with *"pinp is damaged and can't be opened"*. That message is Gatekeeper
+reacting to the missing notarization, not a corrupted download. Clear the
+quarantine flag once and it launches normally from then on:
+
+```bash
+xattr -cr /Applications/pinp.app
+```
+
+### Run from source
 
 ```bash
 git clone <your-fork-url> pinp
@@ -438,12 +455,12 @@ worth contributing to:
   `visibleOnAllWorkspaces` and `skipTransformProcessType`, which are
   Mac-specific. Windows and Linux would need a different implementation of the
   same idea.
-- **Apple Silicon only in the build config.** The `arm64` target is hardcoded.
-  It likely works on Intel by adding `x64` to the target list, but that is
-  untested.
-- **Ad-hoc signed**, so a built `.app` runs only on the machine that produced
-  it. There is no notarized release.
-- **No automated tests**, no linter, no CI.
+- **The Intel slice is untested.** The build target is universal, so an `x86_64`
+  binary ships, but it has only ever been run on Apple Silicon.
+- **Ad-hoc signed, not notarized.** Every downloader has to clear the quarantine
+  flag by hand on first launch (see [Install & run](#install--run)). Fixing this
+  properly needs a paid Apple Developer account.
+- **No automated tests** and no linter. CI only builds releases.
 - **No settings UI.** Changing the home page means editing a constant.
 - **Google sign-in is inherently fragile** — it depends on a heuristic that
   Google controls.

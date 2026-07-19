@@ -15,11 +15,14 @@ mac:
   # CFBundleIconFile key — the Info.plist is never edited by hand here.
   icon: assets/icon.icns
   target:
-    - target: dir
-      arch: arm64
-  # Ad-hoc signature: the app runs only on the machine that built it, which is
-  # exactly this use case. Needs Command Line Tools only — no full Xcode. (The
-  # official code-signing doc's Xcode prerequisite is about notarization.)
+    # Universal so one download covers both Apple Silicon and Intel Macs.
+    - target: dmg
+      arch: universal
+  # Ad-hoc signature: no Apple Developer account, so the app is not notarized.
+  # It runs anywhere, but Gatekeeper quarantines it on download — the README
+  # tells users to run `xattr -cr /Applications/pinp.app` once. Needs Command
+  # Line Tools only, no full Xcode. (The official code-signing doc's Xcode
+  # prerequisite is about notarization.)
   identity: "-"
   # Critical: hardened runtime + ad-hoc signing turns on library validation,
   # which rejects the prebuilt Electron framework (different Team ID) and the
