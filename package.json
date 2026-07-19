@@ -1,0 +1,25 @@
+{
+  "name": "pinp",
+  "version": "1.0.0",
+  "description": "Floating picture-in-picture mini-browser for macOS",
+  "main": "src/main/index.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --mac"
+  },
+  "keywords": [
+    "electron",
+    "macos",
+    "picture-in-picture",
+    "pip",
+    "always-on-top",
+    "floating-window",
+    "mini-browser"
+  ],
+  "author": "Bruno Milioli Ferreira",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^43.1.1",
+    "electron-builder": "^26.15.3"
+  }
+}

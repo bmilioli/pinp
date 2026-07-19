@@ -1,0 +1,13 @@
+node_modules/
+dist/
+out/
+
+# macOS
+.DS_Store
+
+# Local tooling config (may contain machine-specific paths)
+.claude/settings.local.json
+
+# Logs
+*.log
+npm-debug.log*

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self';" />
+    <title>pinp</title>
+    <link rel="stylesheet" href="chrome.css" />
+  </head>
+  <body>
+    <!--
+      The hot zone is the only part of the window that ever receives mouse
+      events: everything below it is covered by the WebContentsView. Its height
+      is what expands (36px) and collapses (5px).
+    -->
+    <div id="hotzone">
+      <div id="bar">
+        <span id="draghandle" title="Drag to move">⠿</span>
+        <button id="back" class="icon" title="Back" disabled>‹</button>
+        <button id="forward" class="icon" title="Forward" disabled>›</button>
+        <button id="reload" class="icon" title="Reload">⟳</button>
+
+        <input id="url" type="text" spellcheck="false"
+               placeholder="URL or search on YouTube" />
+
+        <button class="icon size" data-preset="1" title="320×180">S</button>
+        <button class="icon size" data-preset="2" title="480×270">M</button>
+        <button class="icon size" data-preset="3" title="640×360">L</button>
+        <button class="icon size" data-preset="4" title="854×480">XL</button>
+        <button id="opacity" class="icon" title="Cycle opacity">◐</button>
+        <button id="quit" class="icon danger" title="Quit">×</button>
+      </div>
+      <div id="grip"><span id="griphandle"></span></div>
+    </div>
+
+    <script src="chrome.js"></script>
+  </body>
+</html>

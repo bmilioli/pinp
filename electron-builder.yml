@@ -1,0 +1,36 @@
+appId: com.brunomilioli.pinp
+productName: pinp
+directories:
+  output: dist
+
+files:
+  - src/**/*
+  - assets/**/*
+  - package.json
+
+mac:
+  category: public.app-category.utilities
+  target:
+    - target: dir
+      arch: arm64
+  # Ad-hoc signature: the app runs only on the machine that built it, which is
+  # exactly this use case. Needs Command Line Tools only — no full Xcode. (The
+  # official code-signing doc's Xcode prerequisite is about notarization.)
+  identity: "-"
+  # Critical: hardened runtime + ad-hoc signing turns on library validation,
+  # which rejects the prebuilt Electron framework (different Team ID) and the
+  # app simply refuses to launch.
+  hardenedRuntime: false
+  # Accessory/UIElement app: no Dock icon, no menu bar. Matches
+  # app.setActivationPolicy('accessory') at runtime, so the Dock icon never
+  # flashes during startup.
+  extendInfo:
+    LSUIElement: true
+    # Google sign-in falls back to passkeys / security keys, which go over
+    # Bluetooth. Chromium refuses to touch Bluetooth unless the bundle declares
+    # a usage description — without these the FIDO path fails with
+    # "does not have Bluetooth metadata in its Info.plist".
+    NSBluetoothAlwaysUsageDescription: >-
+      pinp uses Bluetooth to let you sign in with a passkey or security key.
+    NSBluetoothPeripheralUsageDescription: >-
+      pinp uses Bluetooth to let you sign in with a passkey or security key.

@@ -1,0 +1,116 @@
+:root {
+  --chrome-h: 36px;
+  /* Must clear the ~5px native resize border a frameless macOS window keeps at
+     its top edge. At 5px the OS owned the entire strip and the DOM never saw a
+     single mouseenter, so the bar could not be opened at all. */
+  --collapsed-h: 14px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+  font: 12px -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #e8e8ea;
+}
+
+#hotzone {
+  height: var(--collapsed-h);
+  /* No height transition: the WebContentsView bounds are repositioned from the
+     main process in one step, and an animated bar would visibly desync from it. */
+  overflow: hidden;
+  background: #18181b;
+  /* Explicitly NOT a drag region. A drag region swallows mouse events on macOS,
+     which killed the mouseenter that opens the bar. Dragging lives on the two
+     dedicated handles below (#griphandle while collapsed, #draghandle while
+     open) — small enough that hover always has somewhere to land. */
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+  user-select: none;
+}
+
+#hotzone.open { height: var(--chrome-h); }
+
+/* Visible only while collapsed — a hint that there's something to hover. */
+#grip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--collapsed-h);
+  background: linear-gradient(90deg, #18181b, #26262c, #18181b);
+}
+#hotzone.open #grip { display: none; }
+
+/* The only draggable thing while collapsed. Centered and narrow so the rest of
+   the strip stays free to receive hover. */
+#griphandle {
+  width: 64px;
+  height: 4px;
+  border-radius: 2px;
+  background: #46464f;
+  -webkit-app-region: drag;
+  app-region: drag;
+}
+
+/* Same job while the bar is open. */
+#draghandle {
+  flex: 0 0 auto;
+  padding: 0 2px;
+  color: #52525b;
+  font-size: 12px;
+  line-height: 1;
+  cursor: grab;
+  -webkit-app-region: drag;
+  app-region: drag;
+}
+
+#bar {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  height: var(--chrome-h);
+  padding: 0 6px;
+}
+#hotzone.open #bar { display: flex; }
+
+/* Draggable areas ignore ALL pointer events, so every interactive element must
+   explicitly opt out or it becomes unclickable. */
+button, input {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+
+.icon {
+  flex: 0 0 auto;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  border: 0;
+  border-radius: 5px;
+  background: #27272d;
+  color: #d4d4d8;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+.icon:hover:not(:disabled) { background: #35353d; }
+.icon:disabled { opacity: 0.3; cursor: default; }
+.icon.size { font-size: 10px; font-weight: 600; }
+.icon.danger:hover { background: #b3261e; color: #fff; }
+
+#url {
+  flex: 1 1 auto;
+  min-width: 40px;
+  height: 22px;
+  padding: 0 8px;
+  border: 1px solid #35353d;
+  border-radius: 5px;
+  background: #0f0f12;
+  color: #e8e8ea;
+  font: inherit;
+  outline: none;
+}
+#url:focus { border-color: #5b5bd6; }
