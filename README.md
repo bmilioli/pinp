@@ -46,6 +46,7 @@ sessions between restarts, and hides its entire UI until you hover it.
 - [Ideas & good first issues](#ideas--good-first-issues)
 - [Contributing](#contributing)
 - [Security & privacy](#security--privacy)
+- [Support the project](#support-the-project)
 - [License](#license)
 
 ---
@@ -552,6 +553,29 @@ questions are all welcome as issues.
   keep working.
 - Found a security issue? Open an issue, or contact the maintainer privately if
   you consider it sensitive.
+
+---
+
+## Support the project
+
+pinp is free, open source, and will stay that way. There is no paid tier, no
+telemetry, and nothing to unlock.
+
+If it saves you time and you'd like to say thanks, you can buy me a coffee ☕ in
+crypto:
+
+**EVM wallet (Ethereum, Base, Arbitrum, Polygon, BNB Chain — any EVM chain):**
+
+```
+0x57B3De813e9CE4Bc6F8D89f6EA3f82Ae46606EB1
+```
+
+> ⚠️ Send only assets on **EVM-compatible networks** to this address. Tokens
+> sent on a non-EVM chain (Bitcoin, Solana, Tron, …) are permanently lost.
+
+Donations are entirely optional and grant no priority on issues or pull
+requests — everyone gets the same treatment. A ⭐ on the repo or a good bug
+report is just as appreciated.
 
 ---
 

@@ -6,7 +6,7 @@
   "scripts": {
     "start": "electron .",
     "icon": "./scripts/make-icon.sh",
-    "build": "electron-builder --mac",
+    "build": "electron-builder --mac --publish never",
     "install-app": "./scripts/install-app.sh",
     "release": "npm run build && npm run install-app"
   },
