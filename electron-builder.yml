@@ -10,6 +10,10 @@ files:
 
 mac:
   category: public.app-category.utilities
+  # Generated from assets/icon.svg by scripts/make-icon.sh (npm run icon).
+  # electron-builder copies it into Contents/Resources and writes the matching
+  # CFBundleIconFile key — the Info.plist is never edited by hand here.
+  icon: assets/icon.icns
   target:
     - target: dir
       arch: arm64

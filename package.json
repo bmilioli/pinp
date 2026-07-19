@@ -5,6 +5,7 @@
   "main": "src/main/index.js",
   "scripts": {
     "start": "electron .",
+    "icon": "./scripts/make-icon.sh",
     "build": "electron-builder --mac"
   },
   "keywords": [

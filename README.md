@@ -153,6 +153,13 @@ before you change them:
 - **`LSUIElement: true`.** Marks it as an accessory app — no Dock icon, no menu
   bar. This mirrors `app.setActivationPolicy('accessory')` at runtime, and
   having it in the plist means the Dock icon never flashes during startup.
+- **`icon: assets/icon.icns`.** The app icon is a "p in p" monogram — a small
+  `p` nested in the counter of a large one. It's drawn in `assets/icon.svg`, and
+  `npm run icon` renders that to the ten sizes `iconutil` wants and packs them
+  into `assets/icon.icns`; run it after any edit to the SVG. Note that because
+  the app is `LSUIElement`, this icon *never* appears in the Dock or the app
+  switcher — only in Finder, Spotlight and dialogs — so it's tuned to read at
+  512/1024 rather than at Dock size.
 - **`NSBluetooth*UsageDescription`.** Google sign-in can fall back to passkeys
   and security keys, which travel over Bluetooth. Chromium refuses to touch
   Bluetooth unless the bundle declares a usage description — without these the
@@ -411,7 +418,11 @@ pinp/
 │       ├── chrome.css        # its styling (keep --collapsed-h in sync!)
 │       └── chrome.js         # hover logic, URL field, buttons
 ├── assets/
-│   └── trayTemplate.png      # menu bar icon (template image — macOS recolors it)
+│   ├── trayTemplate.png      # menu bar icon (template image — macOS recolors it)
+│   ├── icon.svg              # app icon artwork — the source of truth
+│   └── icon.icns             # generated from icon.svg; what ships in the bundle
+├── scripts/
+│   └── make-icon.sh          # icon.svg → icon.icns (npm run icon)
 ├── electron-builder.yml      # macOS packaging config
 └── package.json
 ```

@@ -2,6 +2,9 @@ node_modules/
 dist/
 out/
 
+# Intermediate .iconset from scripts/make-icon.sh (assets/icon.icns is tracked)
+build/
+
 # macOS
 .DS_Store
 
