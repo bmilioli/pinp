@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copia o build de dist/mac-arm64 para /Applications.
+# Copia o build de dist/mac-universal para /Applications.
 #
 # Só o bundle .app é substituído. Os dados do usuário (login, cookies, cache,
 # window-state.json) vivem em ~/Library/Application Support/pinp e nunca são
@@ -8,7 +8,7 @@
 set -euo pipefail
 
 APP_NAME="pinp.app"
-SRC="$(cd "$(dirname "$0")/.." && pwd)/dist/mac-arm64/$APP_NAME"
+SRC="$(cd "$(dirname "$0")/.." && pwd)/dist/mac-universal/$APP_NAME"
 DEST="/Applications/$APP_NAME"
 
 if [ ! -d "$SRC" ]; then
